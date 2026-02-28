@@ -1,267 +1,212 @@
-//Circular linked list
+//Linked List
 #include<iostream>
 using namespace std;
 
-struct node
-{
-  int data;
-  struct node *next;
-  node(int val)
-  {
-    data = val;
-    next = nullptr;
-  }
+class Linked{
+
+    struct Node{    //Node Structure
+        int data;
+        Node *next;
+    };
+    Node *head;
+    int count, val;
+
+    public:
+        Linked(){       //Empty list
+            head = NULL;
+            count = 0;
+        }
+
+        void beg_ins(){     //Insertion at beginning
+            Node *temp = new Node();
+
+            if(temp == NULL){
+                cout<<"Overflow!!!!";
+                return;
+            }
+            val = getdata();
+            temp->data = val;
+            temp->next = head;
+            head = temp;
+            count++;
+        }
+
+        void end_ins(){     //Insertion at the End
+            Node *temp = new Node();
+            Node *q = head;
+            val = getdata();
+
+            while(q->next != NULL)
+                q = q->next;
+            
+            temp->data = val;
+            q->next = temp;
+            count++;
+            
+        }
+
+        void loc_ins(){     //Insertion at particular location
+            Node *temp = new Node();
+            Node *q = head;
+
+            if(temp == NULL){
+                cout<<"Overflow!!!!";
+                return;
+            }
+
+            int pos, i;
+            cout<<"Enter the position : ";
+            cin>>pos;
+            
+
+            if(pos == 1){
+                beg_ins();
+                return;
+            }
+            else if(pos > size()){
+                cout<<"Error!!! Position is bigger than the size of element.\n";
+                return;
+            }
+            else{
+                val = getdata();
+                for(i = 1; i < pos-1 && q != NULL; i++)     //pos = 3, q = 1
+                    q = q->next;
+                temp->data = val;       //q = 2
+                temp->next = q->next;
+                q->next = temp;
+                count++;
+                
+            }
+        }
+
+        int getdata(){
+            cout<<"Enter data : ";
+            cin>>val;
+            return val;
+        }
+
+        void beg_del(){     //Deletion at Beginning
+            Node *q = head;
+
+            if(head == NULL){
+                cout<<"Empty list!!!!";
+                return;
+            }
+            cout<<"Element being removed is "<<head->data<<endl;
+            head = head->next;
+            delete q;
+        }
+
+        void end_del(){     //Deletion at End
+            Node *q = head;
+
+            if(head == NULL){
+                cout<<"Emptyy list!!!";
+                return;
+            }
+            else{
+                if(head->next == NULL){
+                    cout<<"Only one node is there.\n";
+                    delete head;
+                    return;
+                }
+                while(q->next->next != NULL)
+                    q = q->next;
+
+                cout<<"Element being removed is "<<q->next->data<<endl;
+                delete q->next->next;
+                q->next = NULL;
+            }
+
+        }
+
+        void loc_del(){
+            Node *q = head, *n;
+
+            if(head == NULL){
+                cout<<"Emptyy list!!!";
+                return;
+            }
+            else{
+                int pos;
+                cout<<"Enter the position : ";
+                cin>>pos;
+
+                for(int i = 1; i<pos-1; i++){
+                    n = q;
+                    q = q->next;
+                }
+
+                if(pos == 1)
+                    beg_del();
+                else if(pos > size()){
+                    cout<<"Errorrr!!! Position is greater than number of nodes.\n";
+                    return;
+                }
+                else{
+                    cout<<"\nElement to be removed is : "<<q->data;
+                    n = n->next;
+                    delete q;
+                }
+            }
+        }
+
+        void display(){
+            Node *q = head->next;
+           cout<<"\nHead ->\t"<<head->data<<"\t";
+            while(q != NULL){
+                cout<<q->data<<"\t";
+                q = q->next;
+            }
+            cout<<endl<<endl;
+        }
+
+        int size(){ return count; }
+
 };
 
-void insert_beg(node* &head, int data)
-{
-  node* newNode = new node(data);
-  if(head == nullptr)
-  {
-    newNode->next = newNode;
-    head = newNode;
-    return;
-  }
-  node* temp = head;
+int main(){
+    int val, ch;
+    Linked l;
 
-  while(temp->next != head)
-    temp = temp->next;
-
-  newNode->next = head;
-  temp->next = newNode;
-  head = newNode;
-}
-
-void insert_end(node* &head, int data)
-{
-  
-  node* newNode = new node(data);
-  if(head == nullptr)
-  {
-    newNode->next = newNode;
-    head = newNode;
-    return;
-  }
-  node* temp = head;
-  while(temp->next != head)
-  {
-    temp = temp->next;
-  }
-  temp->next = newNode;
-  newNode->next = head;
-}
-
-void insert_lo(node* &head, int data)
-{
-  int pos;
-  cout<<"\nEnter the position : ";
-  cin>>pos;
-
-  if(pos < 0)
-  {
-    cout<<"Out of Range.\n";
-    return;
-  }
-  else if(head == NULL && pos == 1)
-  {
-    insert_beg(head, data);
-  }
-  else if(pos == 1)
-  {
-    insert_end(head, data);
-  }
-  else
-  {
-    node* newNode = new node(data);
-    node* q = head;
-    while( pos-1 > 1)
-    {
-      q = q->next;
-      pos--;
-    }
-    newNode->next = q->next;
-    q->next = newNode;
-  }
-}
-
-void delete_beg(node* &head)
-{
-  struct node *q = head, *p;
-  if(head == NULL)
-  {
-    cout<<"Empty List\n";
-    return;
-  }
-  while(q->next != head)
-    q = q->next;
-  q->next = head->next;
-  p = head;
-  head = head->next;
-  p->next = nullptr;
-  free(p);
-}
-
-void delete_end(node* &head)
-{
-  struct node *q = head, *p = head;
-  if(head == nullptr)
-  {
-    cout<<"Empty List\n";
-    return;
-  }
-  while(p->next->next != head)
-    p = p->next;
-  q = p->next;
-  p->next = head;
-  q->next = nullptr;
-  free(q);
-}
-
-int getlength(node* &head)
-{
-  struct node *q = head;
-  int count = 1;
-  while(q->next != head)
-  {
-    count++;
-    q = q->next;
-  }
-  return count;
-}
-
-void delete_lo(node* &head)
-{
-  struct node *q = head, *p = head;
-  int pos, l;
-  l = getlength(head);
-  cout<<"Enter a position : ";
-  cin>>pos;
-  if(head == nullptr)
-  {
-    cout<<"Empty List\n\n";
-    return;
-  }
-   else if(pos == 1)
-    {
-      delete_beg(head);
-    }
-    else if(pos == l)
-    {
-      delete_end(head);
-    }
-    else if(pos > l)
-    {
-      cout<<"Out of Range!!!\n";
-      cout<<"Total length of the list : "<<l<<endl;
-      return;
-    }
-    else
-    {
-      while( pos-1 > 1)
-      {
-        q = q->next;
-        pos--;
-      }
-      p = q->next;
-      q->next = p->next;
-      free(p);
-     }
-  }
-
-void reverse(node* &head)
-{
-  struct node *q = head, *p = nullptr, *n = head;
-
-  if(!head || head->next == head)
-  {
-    cout<<"Empty List\n\n";
-    return;
-  }
-  else
-  {
     do{
-      n = q->next;
-      q->next = p;
-      p = q;
-      q = n;
-    }while(q != head);
+        cout<<"\n\tMENU\n\n";
+        cout<<"1. Insertion at beginning\n2. Insertion at End\n3. Insertion at a partiular location\n4.  Deletion at beginning\n";
+        cout<<"5. Deletion at the End\n6. Deletion at a particular location\n7. Reverse of the linked list\n";
+        cout<<"8. Size of the linked list\n9. Display the linked list\n10. Exit\n\n";
+        cout<<"Enter your choice : ";
+        cin>>ch;
 
-    n->next = p;
-    head = p;
-  }
-}
+        switch(ch){
+            case 1: cout<<"\nInserting at Beginning:-\n";
+                    l.beg_ins();
+                    break;
 
-void display(node* &head)
-{
-    if (head == nullptr)   // case 1: empty list
-    {
-        cout << "List is empty.\n";
-        return;
-    }
+            case 2: cout<<"\nInserting at the End:-\n";
+                    l.end_ins();
+                    break;
 
-    node* q = head;
-    while(q->next != head)
-    {
-      cout<<q->data<<"\t->\t";
-      q = q->next;
-    }
-    cout<<q->data<<"\n\n";  // makes it clear it’s circular
-}
+            case 3: cout<<"Inserting at a particular location:- \n";
+                    l.loc_ins();
+                    break;
 
+            case 4: cout<<"Deleting at Beginning:-\n";
+                    l.beg_del();
+                    break;
 
-int main()
-{
-  int choice;
-  struct node* head = nullptr;
-  while(1)
-  {
-    
-    int data;
-    cout<<"Enter your choice : ";
-    cin>>choice;
-    switch(choice)
-    {
-      case 1: cout<<"\nInsertion at the beginning :- \n\n";
-              cout<<"Enter a data : ";
-              cin>>data;
-              insert_beg(head, data);
-              break;
-           
-      case 2: cout<<"\nInsertion at the end :- \n\n";
-              cout<<"Enter a data : ";
-              cin>>data;
-              insert_end(head, data);
-              break;
-      
-      case 3: cout<<"\nInsertion at a particular location :- \n\n";
-              cout<<"Enter a data : ";
-              cin>>data;
-              insert_lo(head, data);
-              break;
-      
-      case 4: cout<<"\nDeletion at the beginning :- \n\n";
-              delete_beg(head);
-              break;
-          
-      case 5: cout<<"\nDeletion at the end :- \n\n";
-              delete_end(head);
-              break;
-              
-      case 6: cout<<"\nDeletion at a particular location :- \n\n";
-              delete_lo(head);
-              break;
-             
-      case 7: display(head);
-              break;
-              
-      case 8: cout<<"\nReverse :- \n";
-              reverse(head);
-              display(head);
-              break;
+            case 5: cout<<"Deleting at End:-\n";
+                    l.end_del();
+                    break;
 
-      case 9: exit(1);
-      default: cout<<"\nINVALID!!!";
-    }
-  }
-  return 0;
+            case 8: cout<<"Total number of Nodes in Linked List is : "<<l.size()<<endl;
+                    break;
+        
+            case 9: cout<<"\nDisplaying Linked Lits:- \n\n";
+                    l.display();
+                    break;
+            case 10: exit(1);
+
+        }
+
+    }while(1);
 }
